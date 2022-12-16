@@ -32,11 +32,11 @@ function Grids({children}){
     }
 
     const findStrike = (arr,strike)=>{
+        let arrStringify = JSON.stringify(arr);
         let gameOver = false;
         arr.map((x)=>{
             if(arr.length>2){
                 if(x[0]===x[1]){
-                    let arrStringify = JSON.stringify(arr);
                     //vertical crossing from [1,1]
                     if(arrStringify.includes(`[${x[0]},${x[1]-1}]`) && arrStringify.includes(`[${x[0]},${x[1]+1}]`)){
                         strike(true)
@@ -79,12 +79,13 @@ function Grids({children}){
     
        })
        //updating pc coordinates
-       if(!gameOver && arr!==pcCor && userCor.length>0){
-        // console.log(gameOver)
+       let totalArrLength = pcCor.length + userCor.length;
+       
+       if(!gameOver && !totalArrLength%2===0 && userCor.length>0){
+        console.log("odd")
         //document.getElementById("00").innerHTML = "O"
-        let pcStrikeCount = 0;
+        let winPreventCount = 0;
         let arrLastVal = arr[(arr.length-1)];
-        let arrStringify = JSON.stringify(arr);
         let blockIdsStringify = JSON.stringify(blockIds);
         let pcArrStringify = JSON.stringify(pcCor);
        //preventing the winning strike of user
@@ -101,12 +102,12 @@ function Grids({children}){
                     if(i==-1 || i==1){
                         for(let n=0;n<2;n++){
                             let id = (arrLastVal[0]+m*(-i+3*n*i)).toString() + (arrLastVal[1]+(-i+3*n*i)*(1-m)).toString();
-                            console.log(pcStrikeCount)
-                            if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([arrLastVal[0]+m*(-i+3*n*i),arrLastVal[1]+(-i+3*n*i)*(1-m)])){
+                            console.log(winPreventCount)
+                            if(blockIdsStringify.includes(id) && winPreventCount<1){
                                 console.log(id)
                                 document.getElementById(`${id}`).innerHTML = "O";
                                 setPcCor([...pcCor,[arrLastVal[0]+m*(-(i)+3*n*i),arrLastVal[1]+(-(i)+3*n*i)*(1-m)]]);
-                                pcStrikeCount++;
+                                winPreventCount++;
                             }
                             
                                 
@@ -121,12 +122,12 @@ function Grids({children}){
                         for(let n=0;n<2;n++){
                             let id = (arrLastVal[0]+m*(-1+(n*i))).toString() + (arrLastVal[1]+(-1+n*i)*(1-m)).toString();
                             console.log(id)
-                            console.log(pcStrikeCount)
-                            if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([arrLastVal[0]+m*(-1+(n*i)),arrLastVal[1]+(-1+n*i)*(1-m)])){
+                            console.log(winPreventCount)
+                            if(blockIdsStringify.includes(id) && winPreventCount<1){
                                 console.log(id)
                                 document.getElementById(`${id}`).innerHTML = "O";
                                 setPcCor([...pcCor,[arrLastVal[0]+m*(-1+n*i),arrLastVal[1]+(-1+n*i)*(1-m)]]);
-                                pcStrikeCount++;
+                                winPreventCount++;
                             }
 
                         }
@@ -135,7 +136,7 @@ function Grids({children}){
 
                 }
                 //diagonal checking
-                else if(pcStrikeCount<1){
+                if(winPreventCount<1){
                     if(arrStringify.includes([arrLastVal[0]+i,arrLastVal[1]+i-2*m*i])){
                         console.log("diagonal")
                         if(i==-1 || i==1){
@@ -143,11 +144,11 @@ function Grids({children}){
                                 // let id =  (arrLastVal[0]+(3*n*i-i)).toString() + (arrLastVal[1]+(3*n*i-i)-2*(n-m)*i+2*i(m-n)).toString();
                                 let id = (arrLastVal[0]+2*i-3*n*i).toString() + (arrLastVal[1]+(1-2*m)*(2*i-3*n*i)).toString();
                                 console.log("1st"+id)
-                                if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([arrLastVal[0]+2*i-3*n*i,arrLastVal[1]+(1-2*m)*(2*i-3*n*i)])){
+                                if(blockIdsStringify.includes(id) && winPreventCount<1){
                                     
                                     document.getElementById(`${id}`).innerHTML = "O";
                                     setPcCor([...pcCor,[arrLastVal[0]+2*i-3*n*i,arrLastVal[1]+(1-2*m)*(2*i-3*n*i)]]);
-                                    pcStrikeCount++;
+                                    winPreventCount++;
                                 }
                             }
 
@@ -156,17 +157,21 @@ function Grids({children}){
                         else if(i==-2 || i==2){
                             let id =  (arrLastVal[0]+(i/2)).toString() + (arrLastVal[1]+(i/2)-m*i).toString();
                             console.log("2nd"+id)
-                            if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([arrLastVal[0]+1-2*m,arrLastVal[1]-1+2*m])){
+                            if(blockIdsStringify.includes(id) && winPreventCount<1){
                                 console.log(id)
                                 document.getElementById(`${id}`).innerHTML = "O";
                                 setPcCor([...pcCor,[arrLastVal[0]+1-2*m,arrLastVal[1]-1+2*m]]);
-                                pcStrikeCount++;
+                                winPreventCount++;
                             }
-                            console.log(pcStrikeCount);
+                            console.log(winPreventCount);
 
                         }
 
                     }
+
+                }
+                if(winPreventCount<1){
+                    console.log("genral")
 
                 }
                
