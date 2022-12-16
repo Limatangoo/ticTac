@@ -79,49 +79,54 @@ function Grids({children}){
     
        })
        //updating pc coordinates
-       if(!gameOver && arr!==pcCor){
+       if(!gameOver && arr!==pcCor && userCor.length>0){
         // console.log(gameOver)
         //document.getElementById("00").innerHTML = "O"
-       let pcStrikeCount = 0;
-        arr.map((x)=>{
-                let arrStringify = JSON.stringify(arr);
-                let blockIdsStringify = JSON.stringify(blockIds);
-                let pcArrStringify = JSON.stringify(pcCor);
+        let pcStrikeCount = 0;
+        let arrLastVal = arr[(arr.length-1)];
+        let arrStringify = JSON.stringify(arr);
+        let blockIdsStringify = JSON.stringify(blockIds);
+        let pcArrStringify = JSON.stringify(pcCor);
+       //preventing the winning strike of user
+        for(let i=-2;i<3;i++){
+            if(i==0){
+                continue;
 
-                for(let i=-2;i<3;i++){
-                    //m=0 horizontal, m=1 vertical checking
-                    for(let m=0;m<2;m++){
-                        if(arrStringify.includes([x[0]+m*i,x[1]+i*(1-m)])){
-                            if(i==-1 || i==1){
-                                for(let n=0;n<2;n++){
-                                    let id = (x[0]+m*(-i+3*n*i)).toString() + (x[1]+(-i+3*n*i)*(1-m)).toString();
-                                    console.log(pcStrikeCount)
-                                    if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([x[0]+m*(-i+3*n*i),x[1]+(-i+3*n*i)*(1-m)])){
-                                        console.log(id)
-                                        document.getElementById(`${id}`).innerHTML = "O";
-                                        setPcCor([...pcCor,[x[0]+m*(-(i)+3*n*i),x[1]+(-(i)+3*n*i)*(1-m)]]);
-                                        pcStrikeCount++;
-                                    }
-                            
-                                }
-                                
-                                
-
+            }
+           
+            for(let m=0;m<2;m++){
+                 //m=0 horizontal, m=1 vertical checking
+                 if(arrStringify.includes([arrLastVal[0]+m*i,arrLastVal[1]+i*(1-m)])){
+                    // console.log("came")
+                    if(i==-1 || i==1){
+                        for(let n=0;n<2;n++){
+                            let id = (arrLastVal[0]+m*(-i+3*n*i)).toString() + (arrLastVal[1]+(-i+3*n*i)*(1-m)).toString();
+                            console.log(pcStrikeCount)
+                            if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([arrLastVal[0]+m*(-i+3*n*i),arrLastVal[1]+(-i+3*n*i)*(1-m)])){
+                                console.log(id)
+                                document.getElementById(`${id}`).innerHTML = "O";
+                                setPcCor([...pcCor,[arrLastVal[0]+m*(-(i)+3*n*i),arrLastVal[1]+(-(i)+3*n*i)*(1-m)]]);
+                                pcStrikeCount++;
                             }
-                            else if(i==-2 || i==2){
-                                for(let n=0;n<2;n++){
-                                    let id = (x[0]+m*(-1+(n*i))).toString() + (x[1]+(-1+n*i)*(1-m)).toString();
-                                    // console.log(id)
-                                    console.log(pcStrikeCount)
-                                    if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([x[0]+m*(-1+(n*i)),x[1]+(-1+n*i)*(1-m)])){
-                                        console.log(id)
-                                        document.getElementById(`${id}`).innerHTML = "O";
-                                        setPcCor([...pcCor,[x[0]+m*(-1+n*i),x[1]+(-1+n*i)*(1-m)]]);
-                                        pcStrikeCount++;
-                                    }
+                            
+                                
+                            
+                    
+                        }
+                        
+                        
 
-                                }
-
+                    }
+                    else if(i==-2 || i==2){
+                        for(let n=0;n<2;n++){
+                            let id = (arrLastVal[0]+m*(-1+(n*i))).toString() + (arrLastVal[1]+(-1+n*i)*(1-m)).toString();
+                            console.log(id)
+                            console.log(pcStrikeCount)
+                            if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([arrLastVal[0]+m*(-1+(n*i)),arrLastVal[1]+(-1+n*i)*(1-m)])){
+                                console.log(id)
+                                document.getElementById(`${id}`).innerHTML = "O";
+                                setPcCor([...pcCor,[arrLastVal[0]+m*(-1+n*i),arrLastVal[1]+(-1+n*i)*(1-m)]]);
+                                pcStrikeCount++;
                             }
 
                         }
@@ -129,8 +134,49 @@ function Grids({children}){
                     }
 
                 }
+                //diagonal checking
+                else if(pcStrikeCount<1){
+                    if(arrStringify.includes([arrLastVal[0]+i,arrLastVal[1]+i-2*m*i])){
+                        console.log("diagonal")
+                        if(i==-1 || i==1){
+                            for(let n=0;n<2;n++){
+                                // let id =  (arrLastVal[0]+(3*n*i-i)).toString() + (arrLastVal[1]+(3*n*i-i)-2*(n-m)*i+2*i(m-n)).toString();
+                                let id = (arrLastVal[0]+2*i-3*n*i).toString() + (arrLastVal[1]+(1-2*m)*(2*i-3*n*i)).toString();
+                                console.log("1st"+id)
+                                if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([arrLastVal[0]+2*i-3*n*i,arrLastVal[1]+(1-2*m)*(2*i-3*n*i)])){
+                                    
+                                    document.getElementById(`${id}`).innerHTML = "O";
+                                    setPcCor([...pcCor,[arrLastVal[0]+2*i-3*n*i,arrLastVal[1]+(1-2*m)*(2*i-3*n*i)]]);
+                                    pcStrikeCount++;
+                                }
+                            }
 
-                //}
+
+                        }
+                        else if(i==-2 || i==2){
+                            let id =  (arrLastVal[0]+(i/2)).toString() + (arrLastVal[1]+(i/2)-m*i).toString();
+                            console.log("2nd"+id)
+                            if(blockIdsStringify.includes(id) && pcStrikeCount<1 && !pcArrStringify.includes([arrLastVal[0]+1-2*m,arrLastVal[1]-1+2*m])){
+                                console.log(id)
+                                document.getElementById(`${id}`).innerHTML = "O";
+                                setPcCor([...pcCor,[arrLastVal[0]+1-2*m,arrLastVal[1]-1+2*m]]);
+                                pcStrikeCount++;
+                            }
+                            console.log(pcStrikeCount);
+
+                        }
+
+                    }
+
+                }
+               
+
+            }
+            
+
+        }
+
+              
 
 
 
@@ -138,7 +184,6 @@ function Grids({children}){
  
             
 
-        })
 
        }
        
